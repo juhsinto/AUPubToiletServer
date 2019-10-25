@@ -8,18 +8,18 @@ let mongoose = require("mongoose");
 // Initialize the app
 let app = express();
 
-const fs = require('fs');
+const fs = require("fs");
 
-var httpServer = require('http').createServer(app);
-var httpsServer = require('https');
+var httpServer = require("http").createServer(app);
+var httpsServer = require("https");
 
 // Import routes
 let apiRoutes = require("./api-routes");
 
 // for ssl
-app.use(express.static(__dirname + '/static', { dotfiles: 'allow' } ))
+app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
 
-var cors = require('cors');
+var cors = require("cors");
 app.use(cors());
 
 //app.use(function(req, res, next) {
@@ -27,7 +27,6 @@ app.use(cors());
 //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 //  next();
 //});
-
 
 // Configure bodyparser to handle post requests
 app.use(
@@ -37,9 +36,15 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// Mlab  connection ; protect password
+// Mlab  connection ; old - melbourne only dataset
+// mongoose.connect(
+//   "mongodb://jacinto:D4VkaYik#lG5@ds337418.mlab.com:37418/toilets-melbourne",
+//   { useNewUrlParser: true }
+// );
+
+// Mlab  connection - new ; au dataset ; TODO: protect password
 mongoose.connect(
-  "mongodb://jacinto:D4VkaYik#lG5@ds337418.mlab.com:37418/toilets-melbourne",
+  "mongodb://jacinto:D4VkaYik#lG5@ds121406.mlab.com:21406/toilets_au",
   { useNewUrlParser: true }
 );
 
@@ -69,17 +74,24 @@ app.use("/api", apiRoutes);
 
 // Launch app to listen to specified port
 //app.listen(port, function() {
- // console.log("Running server on port " + port);
+// console.log("Running server on port " + port);
 //});
 
 httpServer.listen(8080, () => {
-  console.log('Listening...')
-})
+  console.log("Listening...");
+});
 
-httpsServer.createServer({
-  key: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/cert.pem'),
-  ca: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/chain.pem')
-}, app).listen(8443, () => {
-  console.log('Listening...')
-})
+httpsServer
+  .createServer(
+    {
+      key: fs.readFileSync(
+        "/etc/letsencrypt/live/jacintomendes.com/privkey.pem"
+      ),
+      cert: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/cert.pem"),
+      ca: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/chain.pem")
+    },
+    app
+  )
+  .listen(8443, () => {
+    console.log("Listening...");
+  });
