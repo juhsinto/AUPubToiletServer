@@ -4,11 +4,31 @@ let express = require("express");
 let bodyParser = require("body-parser");
 // Import Mongoose
 let mongoose = require("mongoose");
+
 // Initialize the app
 let app = express();
 
+const fs = require('fs');
+
+var httpServer = require('http').createServer(app);
+var httpsServer = require('https');
+
 // Import routes
 let apiRoutes = require("./api-routes");
+
+// for ssl
+app.use(express.static(__dirname + '/static', { dotfiles: 'allow' } ))
+
+var cors = require('cors');
+app.use(cors());
+
+//app.use(function(req, res, next) {
+//res.header("Access-Control-Allow-Origin", "www.jacintomendes.com"); // update to match the domain you will make the request from
+//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//  next();
+//});
+
+
 // Configure bodyparser to handle post requests
 app.use(
   bodyParser.urlencoded({
@@ -48,6 +68,18 @@ app.get("/", (req, res) =>
 app.use("/api", apiRoutes);
 
 // Launch app to listen to specified port
-app.listen(port, function() {
-  console.log("Running server on port " + port);
-});
+//app.listen(port, function() {
+ // console.log("Running server on port " + port);
+//});
+
+httpServer.listen(8080, () => {
+  console.log('Listening...')
+})
+
+httpsServer.createServer({
+  key: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/cert.pem'),
+  ca: fs.readFileSync('/etc/letsencrypt/live/jacintomendes.com/chain.pem')
+}, app).listen(8443, () => {
+  console.log('Listening...')
+})

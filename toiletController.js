@@ -32,7 +32,7 @@ exports.find = function(req, res) {
         $maxDistance: 500 /* 500 meters */
       }
     }
-  }).find((err, toiletResults) => {
+  }).limit(3).find((err, toiletResults) => {
     console.log(JSON.stringify(toiletResults, 0, 2));
 
     if (err) {
