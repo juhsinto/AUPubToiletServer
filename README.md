@@ -1,4 +1,4 @@
-# Natinoal (AU) Public Toilet API
+# National (AU) Public Toilet API
 
 REST API built with express, mongo (hosted externally - on MLab), and node
 
