@@ -5,6 +5,9 @@ let bodyParser = require("body-parser");
 // Import Mongoose
 let mongoose = require("mongoose");
 
+// store mongo password separately
+require("./mlab_password_file")
+
 // Initialize the app
 let app = express();
 
@@ -22,12 +25,6 @@ app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
 var cors = require("cors");
 app.use(cors());
 
-//app.use(function(req, res, next) {
-//res.header("Access-Control-Allow-Origin", "www.jacintomendes.com"); // update to match the domain you will make the request from
-//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//  next();
-//});
-
 // Configure bodyparser to handle post requests
 app.use(
   bodyParser.urlencoded({
@@ -36,27 +33,22 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// Mlab  connection ; old - melbourne only dataset
-// mongoose.connect(
-//   "mongodb://jacinto:D4VkaYik#lG5@ds337418.mlab.com:37418/toilets-melbourne",
-//   { useNewUrlParser: true }
-// );
-
-// Mlab  connection - new ; au dataset ; TODO: protect password
+// Mlab  connection - au dataset ; 
+// mongodb_password is stored in password file like `var mongodb_password = "xyz"`
 mongoose.connect(
-  "mongodb://jacinto:D4VkaYik#lG5@ds121406.mlab.com:21406/toilets_au",
+  "mongodb://jacinto:"+ mongodb_password +"@ds121406.mlab.com:21406/toilets_au",
   { useNewUrlParser: true }
 );
 
 var db = mongoose.connection;
 
-// Added check for DB connection
-
+// check for DB connection
 if (!db) console.log("Error connecting db");
 else console.log("Db connected successfully");
 
 // Setup server port
 var port = process.env.PORT || 8080;
+
 
 // Send message for default URL
 app.get("/", (req, res) =>
@@ -72,13 +64,8 @@ app.get("/", (req, res) =>
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 
-// Launch app to listen to specified port
-//app.listen(port, function() {
-// console.log("Running server on port " + port);
-//});
-
 httpServer.listen(8080, () => {
-  console.log("Listening...");
+  console.log("Listening for non-SSL requests...");
 });
 
 httpsServer
@@ -93,5 +80,5 @@ httpsServer
     app
   )
   .listen(8443, () => {
-    console.log("Listening...");
+    console.log("Listening for SSL requests...");
   });
