@@ -53,7 +53,7 @@ var port = process.env.PORT || 8080;
 // Send message for default URL
 app.get("/", (req, res) =>
   res.send(
-    "<p> Melbourne Public Toilet REST API -  <br> \
+    "<p> Public Toilet (AU) REST API -  <br> \
     GET: /api, <br>\
     GET: /api/toilets <br> \
     POST:/api/toilets with body {lat: <>,  long: <>} \
