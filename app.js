@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 // Mlab  connection - au dataset ; 
 // mongodb_password is stored in password file like `var mongodb_password = "xyz"`
 mongoose.connect(
-  "mongodb://jacinto:"+ mongodb_password +"@ds121406.mlab.com:21406/toilets_au",
+  "mongodb+srv://jacinto:"+ encodeURIComponent(mongodb_password) +"@toilets-au.kbefj.mongodb.net/toilets_au?retryWrites=true&w=majority",
   { useNewUrlParser: true }
 );
 
