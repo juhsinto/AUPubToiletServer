@@ -11,6 +11,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -151,7 +152,11 @@ func GetToiletByLatLong(w http.ResponseWriter, r *http.Request) {
 	response, _ := formatter(points, " ", "   ")
 
 	fmt.Println(string(response))
-	json.NewEncoder(w).Encode(points)
+	json.NewEncoder(w).Encode(models.ToiletsResponse{
+		"success",
+		"Toilets retrieved successfully",
+		points,
+	})
 }
 
 //Connection mongoDB with helper class
@@ -164,5 +169,23 @@ func main() {
 	router.HandleFunc("/api/toilets/", GetToiletByLatLong).Methods("POST")
 	router.HandleFunc("/api/toilet/", GetOneToilet).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	handler := cors.Default().Handler(router)
+
+	//  Start HTTP
+	go func() {
+		errHTTP := http.ListenAndServe(fmt.Sprintf(":%d", 8080), handler)
+		if errHTTP != nil {
+			log.Fatal("Web server (HTTP): ", errHTTP)
+		}
+	}()
+
+	//  Start HTTPS
+	errHTTPS := http.ListenAndServeTLS(fmt.Sprintf(":%d", 8443),
+		"/etc/letsencrypt/live/jacintomendes.com/cert.pem",
+		"/etc/letsencrypt/live/jacintomendes.com/privkey.pem",
+		handler)
+	if errHTTPS != nil {
+		log.Fatal("Web server (HTTPS): ", errHTTPS)
+	}
+
 }

@@ -23,11 +23,18 @@ type Point struct {
 	BabyChange       string   `json:"baby_change" bson:"baby_change"`
 	SharpsDisposal   string   `json:"sharps_disposal" bson:"sharps_disposal"`
 	SanitaryDisposal string   `json:"sanitary_disposal" bson:"sanitary_disposal"`
-	Location         Location `json:"location" bson:"loc"`
+	Loc              Location `json:"loc" bson:"loc"`
 }
 
 // InputLocation - input location from user
 type InputLocation struct {
 	Lat  float64 `json:"lat"`
 	Long float64 `json:"long"`
+}
+
+// ToiletsResponse - response for GetToiletByLatLong
+type ToiletsResponse struct {
+	Status  string  `json:"status"`
+	Message string  `json:"message"`
+	Data    []Point `json:"data"`
 }
