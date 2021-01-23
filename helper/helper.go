@@ -6,8 +6,10 @@ import (
 	"geoserver/models"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,7 +18,14 @@ import (
 // If you want to export your function. You must to start upper case function name. Otherwise you won't see your function when you import that on other class.
 func ConnectDB() *mongo.Collection {
 
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://jacinto:D4VkaYik#lG5@toilets-au.kbefj.mongodb.net/toilets_au?retryWrites=true&w=majority"))
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	MONGO_DB_PW := os.Getenv("MONGO_DB_PW")
+
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://jacinto:" + MONGO_DB_PW + "@toilets-au.kbefj.mongodb.net/toilets_au?retryWrites=true&w=majority"))
 	if err != nil {
 		log.Fatal(err)
 	}
