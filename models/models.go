@@ -32,6 +32,13 @@ type InputLocation struct {
 	Long float64 `json:"long"`
 }
 
+// Something - input location from user
+type InputLocationDist struct {
+	Lat      float64 `json:"lat"`
+	Long     float64 `json:"long"`
+	Distance int     `json:"distance"`
+}
+
 // ToiletsResponse - response for GetToiletByLatLong
 type ToiletsResponse struct {
 	Status  string  `json:"status"`

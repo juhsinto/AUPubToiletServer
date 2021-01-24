@@ -4,14 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"geoserver/helper"
-	"geoserver/models"
 	"io/ioutil"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/AUPubToiletServer/helper"
+	"github.com/AUPubToiletServer/models"
 	"github.com/rs/cors"
+
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,9 +21,10 @@ import (
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `<p> Public Toilet (AU) REST API -  <br> 
-    				GET: /toilet/<ID>, <br>
-    				GET: /toilets <br> 
-    				POST: /toilets with body {lat: <>,  long: <>} 
+					GET: /api/toilets <br> 				
+					GET: /api/toilet/<ID>, <br>
+					POST: /api/toilets with body {lat: <>,  long: <>} 
+					POST: /api/toilets-dist with body {lat: <>,  long: <>,  distance: <int>} 
 					</p>`)
 }
 
@@ -159,6 +161,33 @@ func GetToiletByLatLong(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// GetToiletByLatLongDist - Gets a toilet by Lat,Long,Dist in body - POST request
+func GetToiletByLatLongDist(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	// var coordinates []string
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	var inputLocationWithDistance models.InputLocationDist
+
+	if err := json.Unmarshal(reqBody, &inputLocationWithDistance); err != nil {
+		log.Fatal(err)
+	}
+
+	points, _ := GetPointsByDistance(context.TODO(), toiletCollection, helper.NewLocation(inputLocationWithDistance.Long, inputLocationWithDistance.Lat), inputLocationWithDistance.Distance)
+
+	//convert it to JSON so it can be displayed
+	formatter := json.MarshalIndent
+	response, _ := formatter(points, " ", "   ")
+
+	fmt.Println(string(response))
+	json.NewEncoder(w).Encode(models.ToiletsResponse{
+		"success",
+		"Toilets retrieved successfully",
+		points,
+	})
+}
+
 //Connection mongoDB with helper class
 var toiletCollection = helper.ConnectDB()
 
@@ -167,13 +196,17 @@ func main() {
 	router.HandleFunc("/", homeLink).Methods("GET")
 	router.HandleFunc("/api/toilet/{id}", GetToiletByID).Methods("GET")
 	router.HandleFunc("/api/toilets/", GetToiletByLatLong).Methods("POST")
+	router.HandleFunc("/api/toilets-dist/", GetToiletByLatLongDist).Methods("POST")
 	router.HandleFunc("/api/toilet/", GetOneToilet).Methods("GET")
+
+	// Use this to test locally without CORS / HTTPS
+	// fmt.Println(http.ListenAndServe(fmt.Sprintf(":%d", 8080), router))
 
 	handler := cors.Default().Handler(router)
 
 	//  Start HTTP
 	go func() {
-		errHTTP := http.ListenAndServe(fmt.Sprintf(":%d", 8080), handler)
+		errHTTP := http.ListenAndServe(fmt.Sprintf(":%d", 8080), router)
 		if errHTTP != nil {
 			log.Fatal("Web server (HTTP): ", errHTTP)
 		}
