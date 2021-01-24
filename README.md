@@ -2,6 +2,8 @@
 
 REST API built with Express, Mongo (hosted externally - on MLab), and node
 
+Data from https://data.gov.au/dataset/ds-dga-553b3049-2b8b-46a2-95e6-640d7986a8c1/details
+
 ## Endoints
 
 - GET: /api
