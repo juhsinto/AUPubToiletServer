@@ -206,7 +206,7 @@ func main() {
 
 	//  Start HTTP
 	go func() {
-		errHTTP := http.ListenAndServe(fmt.Sprintf(":%d", 8080), router)
+		errHTTP := http.ListenAndServe(fmt.Sprintf(":%d", 8080), handler)
 		if errHTTP != nil {
 			log.Fatal("Web server (HTTP): ", errHTTP)
 		}
