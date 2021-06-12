@@ -5,8 +5,9 @@ let bodyParser = require("body-parser");
 // Import Mongoose
 let mongoose = require("mongoose");
 
+require('dotenv').config()
 // store mongo password separately
-require("./mlab_password_file")
+mongodb_password = process.env.MONGO_PW
 
 // Initialize the app
 let app = express();
@@ -34,7 +35,7 @@ app.use(
 app.use(bodyParser.json());
 
 // Mlab  connection - au dataset ; 
-// mongodb_password is stored in password file like `var mongodb_password = "xyz"`
+// mongodb_password is stored in .env file
 mongoose.connect(
   "mongodb+srv://jacinto:"+ encodeURIComponent(mongodb_password) +"@toilets-au.kbefj.mongodb.net/toilets_au?retryWrites=true&w=majority",
   { useNewUrlParser: true }
@@ -57,6 +58,7 @@ app.get("/", (req, res) =>
     GET: /api, <br>\
     GET: /api/toilets <br> \
     POST:/api/toilets with body {lat: <>,  long: <>} \
+    POST:/api/toilets-dist with body {lat: <>,  long: <>, distance: <>} \
     </p>"
   )
 );
@@ -65,20 +67,20 @@ app.get("/", (req, res) =>
 app.use("/api", apiRoutes);
 
 httpServer.listen(8080, () => {
-  console.log("Listening for non-SSL requests...");
+  console.log("jm: Listening for non-SSL requests...");
 });
 
 httpsServer
   .createServer(
-    {
-      key: fs.readFileSync(
-        "/etc/letsencrypt/live/jacintomendes.com/privkey.pem"
-      ),
-      cert: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/cert.pem"),
-      ca: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/chain.pem")
-    },
+    // {
+    //   key: fs.readFileSync(
+    //     "/etc/letsencrypt/live/jacintomendes.com/privkey.pem"
+    //   ),
+    //   cert: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/cert.pem"),
+    //   ca: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/chain.pem")
+    // },
     app
   )
   .listen(8443, () => {
-    console.log("Listening for SSL requests...");
+    console.log("jm: Listening for SSL requests...");
   });

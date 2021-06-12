@@ -1,2 +1,4 @@
 node_modules
 mlab_password_file.js
+.env
+.gitignore
