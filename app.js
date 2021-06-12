@@ -66,21 +66,21 @@ app.get("/", (req, res) =>
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 
-// httpServer.listen(port, () => {
-//   console.log("jm: Listening for non-SSL requests...");
-// });
+httpServer.listen(port, () => {
+  console.log("jm: Listening for non-SSL requests...");
+});
 
-httpsServer
-  .createServer(
-    // {
-    //   key: fs.readFileSync(
-    //     "/etc/letsencrypt/live/jacintomendes.com/privkey.pem"
-    //   ),
-    //   cert: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/cert.pem"),
-    //   ca: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/chain.pem")
-    // },
-    app
-  )
-  .listen(port, () => {
-    console.log("jm: Listening for SSL requests...");
-  });
+// httpsServer
+//   .createServer(
+//     // {
+//     //   key: fs.readFileSync(
+//     //     "/etc/letsencrypt/live/jacintomendes.com/privkey.pem"
+//     //   ),
+//     //   cert: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/cert.pem"),
+//     //   ca: fs.readFileSync("/etc/letsencrypt/live/jacintomendes.com/chain.pem")
+//     // },
+//     app
+//   )
+//   .listen(port, () => {
+//     console.log("jm: Listening for SSL requests...");
+//   });
