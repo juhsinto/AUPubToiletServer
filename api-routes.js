@@ -15,7 +15,10 @@ var toiletController = require("./toiletController");
 router
   .route("/toilets")
   .get(toiletController.index)
-  .post(toiletController.find)
+  .post(toiletController.find);
+
+router
+  .route("/toilets-dist")
   .post(toiletController.findByDistance);
 
 // Export API routes
