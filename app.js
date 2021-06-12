@@ -66,9 +66,9 @@ app.get("/", (req, res) =>
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 
-httpServer.listen(port, () => {
-  console.log("jm: Listening for non-SSL requests...");
-});
+// httpServer.listen(port, () => {
+//   console.log("jm: Listening for non-SSL requests...");
+// });
 
 httpsServer
   .createServer(
