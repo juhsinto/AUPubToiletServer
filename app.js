@@ -1,7 +1,7 @@
 const express = require("express");
 // Initialize the app
 const app = express();
-// for ssl ??
+// TODO: for ssl ??
 // app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
 
 // Import Body parser
@@ -46,7 +46,7 @@ httpServer.listen(port, () => {
 
 module.exports = httpServer;
 
-require("./databaseConnection");
+require("./models/databaseConnection");
 
 // const fs = require("fs");
 // var httpsServer = require("https");
