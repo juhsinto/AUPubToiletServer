@@ -1,55 +1,23 @@
-// Import express
-let express = require("express");
-// Import Body parser
-let bodyParser = require("body-parser");
-// Import Mongoose
-let mongoose = require("mongoose");
-
-require('dotenv').config()
-// store mongo password separately
-mongodb_password = process.env.MONGO_PW
-
+const express = require("express");
 // Initialize the app
-let app = express();
+const app = express();
+// for ssl ??
+// app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
 
-const fs = require("fs");
-
-var httpServer = require("http").createServer(app);
-var httpsServer = require("https");
-
-// Import routes
-let apiRoutes = require("./api-routes");
-
-// for ssl
-app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
-
+// Import Body parser
+const bodyParser = require("body-parser");
 var cors = require("cors");
 app.use(cors());
 
-// Configure bodyparser to handle post requests
+// Configure bodyParser to handle post requests
 app.use(
   bodyParser.urlencoded({
-    extended: true
+    extended: true,
   })
 );
 app.use(bodyParser.json());
 
-// Mlab  connection - au dataset ; 
-// mongodb_password is stored in .env file
-mongoose.connect(
-  "mongodb+srv://jacinto:"+ encodeURIComponent(mongodb_password) +"@toilets-au.kbefj.mongodb.net/toilets_au?retryWrites=true&w=majority",
-  { useNewUrlParser: true }
-);
-
-var db = mongoose.connection;
-
-// check for DB connection
-if (!db) console.log("Error connecting db");
-else console.log("Db connected successfully");
-
-// Setup server port
-var port = process.env.PORT || 8080;
-
+var httpServer = require("http").createServer(app);
 
 // Send message for default URL
 app.get("/", (req, res) =>
@@ -63,13 +31,25 @@ app.get("/", (req, res) =>
   )
 );
 
+// Import routes
+let apiRoutes = require("./routes/api-routes");
+
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 
+// Setup server port
+var port = process.env.PORT || 8080;
+
 httpServer.listen(port, () => {
-  console.log("jm: Listening for non-SSL requests...");
+  console.log("Listening for non-SSL requests...");
 });
 
+module.exports = httpServer;
+
+require("./databaseConnection");
+
+// const fs = require("fs");
+// var httpsServer = require("https");
 // httpsServer
 //   .createServer(
 //     // {
@@ -82,5 +62,5 @@ httpServer.listen(port, () => {
 //     app
 //   )
 //   .listen(port, () => {
-//     console.log("jm: Listening for SSL requests...");
+//     console.log("Listening for SSL requests...");
 //   });
