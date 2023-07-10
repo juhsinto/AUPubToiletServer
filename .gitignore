@@ -1,4 +1,6 @@
 node_modules
-mlab_password_file.js
+.env.local
+yarn.lock
 .env
 .gitignore
+.vercel
