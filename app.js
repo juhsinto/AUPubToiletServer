@@ -1,12 +1,18 @@
 const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const http = require("http");
+
+dotenv.config();
+// If .env.local file present dotenv will override .env
+dotenv.config({ path: `.env.local`, override: true });
+
 // Initialize the app
 const app = express();
 // TODO: for ssl ??
 // app.use(express.static(__dirname + "/static", { dotfiles: "allow" }));
 
-// Import Body parser
-const bodyParser = require("body-parser");
-var cors = require("cors");
 app.use(cors());
 
 // Configure bodyParser to handle post requests
@@ -17,7 +23,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-var httpServer = require("http").createServer(app);
+const httpServer = http.createServer(app);
 
 // Send message for default URL
 app.get("/", (req, res) =>
@@ -32,16 +38,16 @@ app.get("/", (req, res) =>
 );
 
 // Import routes
-let apiRoutes = require("./routes/api-routes");
+const apiRoutes = require("./routes/api-routes");
 
 // Use Api routes in the App
 app.use("/api", apiRoutes);
 
 // Setup server port
-var port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 httpServer.listen(port, () => {
-  console.log("Listening for non-SSL requests...");
+  console.log("Listening for non-SSL requests... on port ", port);
 });
 
 module.exports = httpServer;

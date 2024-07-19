@@ -9,9 +9,9 @@ let max_search_limit = 500;
 exports.index = async function (req, res) {
   try {
     const toilets = await Toilet.find({}).limit(max_search_limit);
-    res.status(200).json(toilets);
+    return res.status(200).json(toilets);
   } catch (err) {
-    res.json({
+    return res.json({
       status: "error",
       message: err,
     });
@@ -26,20 +26,28 @@ exports.find = async function (req, res) {
     req.body.long
   );
 
-  let toilets = await Toilet.find({
-    loc: {
-      $near: {
-        $minDistance: 0,
-        $maxDistance: 500 /* 500 meters */,
-        $geometry: {
-          type: "Point",
-          coordinates: [req.body.long, req.body.lat],
+  let result = "";
+
+  try {
+    result = await Toilet.find({
+      loc: {
+        $near: {
+          $minDistance: 0,
+          $maxDistance: 500 /* 500 meters */,
+          $geometry: {
+            type: "Point",
+            coordinates: [req.body.long, req.body.lat],
+          },
         },
       },
-    },
-  }).limit(default_search_limit);
-
-  res.status(200).json(toilets);
+    }).limit(default_search_limit);
+  
+  } catch(exception) {
+    result = "Exception: " + JSON.stringify(exception.message);
+    console.log('Encountered Exception ', exception);
+  } finally {
+    return  res.status(200).json(result);
+  }
 };
 
 exports.findByDistance = async function (req, res) {
@@ -52,18 +60,26 @@ exports.findByDistance = async function (req, res) {
     req.body.distance
   );
 
-  const toilets = await Toilet.find({
-    loc: {
-      $near: {
-        $minDistance: 10,
-        $maxDistance: req.body.distance,
-        $geometry: {
-          type: "Point",
-          coordinates: [req.body.long, req.body.lat],
+  let result = "";
+
+  try {
+    result = await Toilet.find({
+      loc: {
+        $near: {
+          $minDistance: 10,
+          $maxDistance: req.body.distance,
+          $geometry: {
+            type: "Point",
+            coordinates: [req.body.long, req.body.lat],
+          },
         },
       },
-    },
-  }).limit(default_search_limit);
+    }).limit(default_search_limit);
 
-  res.status(200).json(toilets);
+  } catch(exception) {
+    result = "Exception: " + JSON.stringify(exception.message);
+    console.log('Encountered Exception ', exception);
+  } finally {
+    return res.status(200).json(result);
+  }
 };

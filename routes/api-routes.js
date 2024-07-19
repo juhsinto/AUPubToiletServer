@@ -1,5 +1,5 @@
 // Initialize express router
-let router = require("express").Router();
+const router = require("express").Router();
 
 // Set default API response
 router.get("/", function (req, res) {
@@ -10,7 +10,7 @@ router.get("/", function (req, res) {
 });
 
 // Import toilet controller
-var toiletController = require("../controllers/toiletController");
+const toiletController = require("../controllers/toiletController");
 
 // Toilet routes
 router

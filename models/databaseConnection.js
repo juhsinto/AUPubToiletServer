@@ -6,17 +6,17 @@ dotenv.config();
 // If .env.local file present dotenv will override .env
 dotenv.config({ path: `.env.local`, override: true });
 
-// load config
-mongodb_username = process.env.USERNAME;
-mongodb_password = process.env.MONGO_PW;
-cluster = process.env.CLUSTER;
-collection = process.env.COLLECTION;
-isDev = process.env.IS_DEV;
+const mongodb_username = encodeURIComponent(process.env.USERNAME);
+const mongodb_password = encodeURIComponent(process.env.MONGO_PW);
+const cluster = process.env.CLUSTER;
+const collection = process.env.COLLECTION;
+
+const uri = `mongodb+srv://${mongodb_username}:${mongodb_password}@${cluster}.kbefj.mongodb.net/toilets_au?authSource=admin`;
 
 // MongoDb  connection - to the toilets collection on the toilet database
 mongoose
   .connect(
-    `mongodb+srv://${mongodb_username}:${mongodb_password}@${cluster}.kbefj.mongodb.net/${collection}?retryWrites=true&w=majority`
+    `${uri}`
   )
   .then(() => {
     console.info("Connection to Database is successful");

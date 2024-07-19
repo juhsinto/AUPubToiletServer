@@ -1,7 +1,7 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 // Setup schema
-var toiletSchema = mongoose.Schema({
+const toiletSchema = mongoose.Schema({
   name: {
     type: String,
   },
